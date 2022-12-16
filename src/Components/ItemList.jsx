@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Item from "./Item";
 
-function NavPage(){
+function NavPage(pagina){
     return(
         <header className="d-flex justify-content-between aling-items-center ">
-            <p>Page 1</p>
-            <button className="btn btn-primary btn-sm" onClick={() => console.log()}>Page 2</button>
+            <p>Page: {pagina.page}</p>
+            <button className="btn btn-primary btn-sm" onClick={() => pagina.setPage(pagina.page + 1) }>Page {pagina.page + 1}</button>
         </header>
     )
     
@@ -13,23 +13,25 @@ function NavPage(){
 
 function ItemList() {
     const[characters, setCharacters] = useState([])
-    const[Loading, setLoading] = useState(true)
+    const[loading, setLoading] = useState(true)
+    const[page, setPage] = useState(1)
+
     useEffect(()=>{
       async function fetchData(){
-        const response = await fetch("https://rickandmortyapi.com/api/character");
+        const response = await fetch("https://rickandmortyapi.com/api/character?page=" + page);
         const data = await response.json()
         setLoading(false)
         setCharacters(data.results)
       }
       fetchData(); 
-    },[])
+    },[page])
   
   return (
     <div className="container">  
 
-    <NavPage/>
+    <NavPage page={page} setPage={setPage}/>
 
-    {Loading ? (<h1>Loading...</h1>):
+    {loading ? (<h1>Loading...</h1>):
     (<div className="row"> 
         {characters.map(item => {
           return(
@@ -41,7 +43,9 @@ function ItemList() {
         </div> 
 
     )}
+    <NavPage page={page} setPage={setPage}/>
     </div>
+    
   )
 }
 
